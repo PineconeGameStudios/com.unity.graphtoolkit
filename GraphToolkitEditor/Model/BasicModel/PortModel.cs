@@ -909,6 +909,16 @@ namespace Unity.GraphToolkit.Editor
                  value = default;
                  return false;
              }
+             return EmbeddedValue.TryGetValue<T>(out value);
+         }
+
+         bool IPort.TryGetValue(out object value)
+         {
+             if (EmbeddedValue == null || IsConnected())
+             {
+                 value = default;
+                 return false;
+             }
              return EmbeddedValue.TryGetValue(out value);
          }
 

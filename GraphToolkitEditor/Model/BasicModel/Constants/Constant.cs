@@ -106,6 +106,35 @@ namespace Unity.GraphToolkit.Editor
         }
 
         /// <summary>
+        /// Try to get the value stored in this constant
+        /// </summary>
+        /// <param name="value"> The value that will be filled with the constant value if possible, or default otherwise.</param>
+        /// <returns>True if the constant contained a compatible value. False otherwise.</returns>
+        public bool TryGetValue(out object value)
+        {
+            var defaultValue = ObjectValue;
+            if (defaultValue is EnumValueReference evr)
+            {
+                defaultValue = evr.ValueAsEnum();
+            }
+            var constantType = Type;
+
+            if (defaultValue == null && constantType.IsClass) //for classes null is a valid value, provided the type matches
+            {
+                value = default;
+                return true;
+            }
+            if (defaultValue != null && defaultValue.GetType() == constantType)
+            {
+                value = defaultValue;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        /// <summary>
         /// Try to set the value of this constant to a <typeparamref name="T"/>.
         /// </summary>
         /// <param name="value"> The value that is set.</param>

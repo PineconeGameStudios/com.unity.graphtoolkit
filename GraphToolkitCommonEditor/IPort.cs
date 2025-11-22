@@ -93,5 +93,20 @@ namespace Unity.GraphToolkit.Editor
         /// value for type <typeparamref name="T"/>.
         /// </remarks>
         bool TryGetValue<T>(out T value);
+
+        /// <summary>
+        /// Tries to retrieve the current value assigned to the port’s UI field.
+        /// </summary>
+        /// <param name="value">When successful, contains the value assigned to the port’s field.</param>
+        /// <returns>
+        /// <c>true</c> if the port is not connected and a field value is available; otherwise, <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// This method is intended for editor-time inspection of an input port’s value, configured through a field
+        /// displayed in the UI. If the port is connected, the field is hidden and no value is available, so the method returns <c>false</c>.
+        /// If the value was never explicitly set, this method still returns <c>true</c>, and <paramref name="value"/> will contain the default
+        /// value for type <see cref="dataType"/>
+        /// </remarks>
+        bool TryGetValue(out object value);
     }
 }
