@@ -106,5 +106,10 @@ namespace Unity.GraphToolkit.Editor
         /// <returns>The output port with the specified name, or null if no match is found.</returns>
         /// <remarks>The output port's name is unique within the node's output ports.</remarks>
         public IPort GetOutputPortByName(string name) => ((NodeModel)this).OutputsById[name];
+
+        /// <summary>
+        /// Retrieves the Guid for the node.
+        /// </summary>
+        public Hash128 Guid => ((NodeModel)this).Guid;
     }
 }
