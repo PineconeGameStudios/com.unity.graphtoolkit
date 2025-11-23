@@ -24,5 +24,47 @@ namespace Unity.GraphToolkit.Editor
         /// This method does not create or modify the subgraph.
         /// </remarks>
         Graph GetSubgraph();
+
+        /// <summary>
+        /// Retrieves the subgraph variable linked to the input port at the given index.
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        IVariable GetVariableForInputPort(int index);
+
+        /// <summary>
+        /// Retrieves the subgraph variable linked to the output port at the given index.
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        IVariable GetVariableForOutputPort(int index);
+
+        /// <summary>
+        /// Retrieves the subgraph variable linked to the given input port.
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        IVariable GetVariableForInputPort(IPort port);
+
+        /// <summary>
+        /// Retrieves the subgraph variable linked to the given output port.
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        IVariable GetVariableForOutputPort(IPort port);
+
+        /// <summary>
+        /// Returns the subgraph input port linked to the given input variable within the subgraph.
+        /// </summary>
+        /// <param name="variable"></param>
+        /// <returns></returns>
+        IPort GetInputPortForVariable(IVariable variable);
+
+        /// <summary>
+        /// Returns the subgraph output port linked to the given output variable within the subgraph.
+        /// </summary>
+        /// <param name="variable"></param>
+        /// <returns></returns>
+        IPort GetOutputPortForVariable(IVariable variable);
     }
 }
