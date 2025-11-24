@@ -26,6 +26,7 @@ namespace Unity.GraphToolkit.Editor
                 string m_DisplayName;
                 PortOrientation m_Orientation;
                 PortConnectorUI m_ConnectorUI;
+                PortCapacity m_PortCapacity;
                 List<Attribute> m_Attributes = new ();
 
                 internal Type portType;
@@ -43,6 +44,7 @@ namespace Unity.GraphToolkit.Editor
                     defaultValue = null;
                     m_Orientation = PortOrientation.Horizontal;
                     m_ConnectorUI = PortConnectorUI.Circle;
+                    m_PortCapacity = PortCapacity.Multi;
                     m_Attributes.Clear();
                     typedBuilder = null;
                 }
@@ -72,6 +74,11 @@ namespace Unity.GraphToolkit.Editor
                 ITypedOutputPortBuilder IPortBuilder<ITypedOutputPortBuilder>.WithConnectorUI(PortConnectorUI connectorUI) => WithConnectorUI(connectorUI);
                 IInputPortBuilder IPortBuilder<IInputPortBuilder>.WithConnectorUI(PortConnectorUI connectorUI) => WithConnectorUI(connectorUI);
                 ITypedInputPortBuilder IPortBuilder<ITypedInputPortBuilder>.WithConnectorUI(PortConnectorUI connectorUI) => WithConnectorUI(connectorUI);
+
+                IOutputPortBuilder IPortBuilder<IOutputPortBuilder>.WithPortCapacity(PortCapacity portCapacity) => WithPortCapacity(portCapacity);
+                ITypedOutputPortBuilder IPortBuilder<ITypedOutputPortBuilder>.WithPortCapacity(PortCapacity portCapacity) => WithPortCapacity(portCapacity);
+                IInputPortBuilder IPortBuilder<IInputPortBuilder>.WithPortCapacity(PortCapacity portCapacity) => WithPortCapacity(portCapacity);
+                ITypedInputPortBuilder IPortBuilder<ITypedInputPortBuilder>.WithPortCapacity(PortCapacity portCapacity) => WithPortCapacity(portCapacity);
 
                 IInputPortBuilder IInputBasePortBuilder<IInputPortBuilder>.Delayed() => Delayed();
                 ITypedInputPortBuilder IInputBasePortBuilder<ITypedInputPortBuilder>.Delayed() => Delayed();
@@ -126,6 +133,12 @@ namespace Unity.GraphToolkit.Editor
                     return this;
                 }
 
+                public PortBuilder WithPortCapacity(PortCapacity portCapacity)
+                {
+                    m_PortCapacity = portCapacity;
+                    return this;
+                }
+
                 public PortBuilder Delayed()
                 {
                     if(!m_Attributes.Any(t => t is DelayedAttribute))
@@ -146,6 +159,7 @@ namespace Unity.GraphToolkit.Editor
                     if( result is PortModelImp portModel )
                     {
                         portModel.ConnectorUI = m_ConnectorUI;
+                        portModel.Capacity = m_PortCapacity;
                     }
                     m_PortsDefinitionContext.ReleaseBuilder(this);
 
@@ -162,6 +176,9 @@ namespace Unity.GraphToolkit.Editor
 
                 IOutputPortBuilder<TData> IPortBuilder<IOutputPortBuilder<TData>>.WithConnectorUI(PortConnectorUI connectorUI) => WithConnectorUI(connectorUI);
                 IInputPortBuilder<TData> IPortBuilder<IInputPortBuilder<TData>>.WithConnectorUI(PortConnectorUI connectorUI) => WithConnectorUI(connectorUI);
+
+                IOutputPortBuilder<TData> IPortBuilder<IOutputPortBuilder<TData>>.WithPortCapacity(PortCapacity portCapacity) => WithPortCapacity(portCapacity);
+                IInputPortBuilder<TData> IPortBuilder<IInputPortBuilder<TData>>.WithPortCapacity(PortCapacity portCapacity) => WithPortCapacity(portCapacity);
 
                 IInputPortBuilder<TData> IInputBasePortBuilder<IInputPortBuilder<TData>>.Delayed() => Delayed();
 
@@ -182,6 +199,12 @@ namespace Unity.GraphToolkit.Editor
                 PortBuilder<TData> WithConnectorUI(PortConnectorUI connectorUI)
                 {
                     parent.WithConnectorUI(connectorUI);
+                    return this;
+                }
+
+                PortBuilder<TData> WithPortCapacity(PortCapacity portCapacity)
+                {
+                    parent.WithPortCapacity(portCapacity);
                     return this;
                 }
 

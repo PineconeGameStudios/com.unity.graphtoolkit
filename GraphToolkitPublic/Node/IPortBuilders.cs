@@ -67,6 +67,8 @@ namespace Unity.GraphToolkit.Editor
         /// Call this method before <see cref="IPortBuilder{T}.Build"/> to ensure the selected style is applied to the constructed port.
         /// </remarks>
         T WithConnectorUI(PortConnectorUI connectorUI);
+
+        T WithPortCapacity(PortCapacity capacity);
     }
 
     /// <summary>
