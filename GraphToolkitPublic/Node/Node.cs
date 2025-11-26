@@ -354,5 +354,8 @@ namespace Unity.GraphToolkit.Editor
 
         /// <inheritdoc />
         public IPort GetOutputPortByName(string name) => ((INode)m_Implementation).GetOutputPortByName(name);
+
+        /// <inheritdoc />
+        public UnityEngine.Hash128 Guid => ((INode)m_Implementation).Guid;
     }
 }
