@@ -8,10 +8,32 @@ using UnityEngine.UIElements;
 
 namespace Unity.GraphToolkit.Editor.Implementation
 {
-    class GraphViewImp : GraphView
+    class GraphViewImp : GraphView, IGraphView
     {
+        IGraphViewController controller;
+
         public GraphViewImp(EditorWindow window, GraphTool graphTool, string graphViewName, GraphRootViewModel graphViewModel, ViewSelection viewSelection, GraphViewDisplayMode displayMode = GraphViewDisplayMode.Interactive, TypeHandleInfos typeHandleInfos = null)
-            : base(window, graphTool, graphViewName, graphViewModel, viewSelection, displayMode, typeHandleInfos) { }
+            : base(window, graphTool, graphViewName, graphViewModel, viewSelection, displayMode, typeHandleInfos)
+        {
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (controller == null && GraphModel is GraphModelImp graphModelImp)
+            {
+                var graphAttribute = graphModelImp.Graph.GetType().GetCustomAttribute<GraphAttribute>();
+                if (graphAttribute != null && graphAttribute.controller != null)
+                {
+                    controller = (IGraphViewController)Activator.CreateInstance(graphAttribute.controller);
+                    controller.SetRootView(this);
+                    controller?.OnEnable();
+                }
+            }
+        }
+
+        Graph IGraphView.Graph => (GraphModel as GraphModelImp)?.Graph;
 
         protected override IDragAndDropHandler GraphAssetDragAndDropHandler
         {
@@ -45,6 +67,14 @@ namespace Unity.GraphToolkit.Editor.Implementation
         {
             BuildContextualMenu(evt);
             evt.menu.PrepareForDisplay(evt.triggerEvent);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            controller?.Dispose();
+            controller = null;
+
+            base.Dispose(disposing);
         }
     }
 }

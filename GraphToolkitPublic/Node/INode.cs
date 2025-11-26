@@ -111,5 +111,12 @@ namespace Unity.GraphToolkit.Editor
         /// Retrieves the Guid for the node.
         /// </summary>
         public Hash128 Guid => ((NodeModel)this).Guid;
+
+        /// <summary>
+        /// Retrieves the INodeView corresponding to this node on the given root view, or null if the node is not present in the view.
+        /// </summary>
+        /// <param name="rootView"></param>
+        /// <returns></returns>
+        public INodeView GetView(IGraphView rootView) => ((NodeModel)this).GetView((RootView)rootView) as INodeView;
     }
 }

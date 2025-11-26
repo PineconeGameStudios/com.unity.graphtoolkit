@@ -11,7 +11,7 @@ namespace Unity.GraphToolkit.Editor
     /// UI for a <see cref="AbstractNodeModel"/>.
     /// </summary>
     [UnityRestricted]
-    internal class NodeView : GraphElement
+    internal class NodeView : GraphElement, INodeView
     {
         /// <summary>
         /// The USS class name added to a <see cref="NodeView"/>.

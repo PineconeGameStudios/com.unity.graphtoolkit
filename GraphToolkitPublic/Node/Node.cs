@@ -357,5 +357,8 @@ namespace Unity.GraphToolkit.Editor
 
         /// <inheritdoc />
         public UnityEngine.Hash128 Guid => ((INode)m_Implementation).Guid;
+
+        /// <inheritdoc />
+        public INodeView GetView(IGraphView graphView) => ((INode)m_Implementation).GetView(graphView);
     }
 }

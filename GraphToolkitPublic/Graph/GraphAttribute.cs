@@ -45,6 +45,11 @@ namespace Unity.GraphToolkit.Editor
         public GraphOptions options { get; }
 
         /// <summary>
+        /// Controller type. Must implement <see cref="IGraphViewController"/> and have a no-argument constructor.
+        /// </summary>
+        public Type controller { get; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GraphAttribute"/> class with a file extension and optional graph options.
         /// </summary>
         /// <param name="extension">
@@ -66,10 +71,11 @@ namespace Unity.GraphToolkit.Editor
         /// public class MyGraph : Graph { }
         /// </code>
         /// </example>
-        public GraphAttribute(string extension, GraphOptions options = GraphOptions.Default)
+        public GraphAttribute(string extension, GraphOptions options = GraphOptions.Default, Type controller = null)
         {
             this.extension = extension;
             this.options = options;
+            this.controller = controller;
         }
     }
 }

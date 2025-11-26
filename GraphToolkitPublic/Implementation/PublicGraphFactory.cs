@@ -144,6 +144,18 @@ namespace Unity.GraphToolkit.Editor.Implementation
                     return;
                 }
 
+                if (graphAttribute.controller != null && !typeof(IGraphViewController).IsAssignableFrom(graphAttribute.controller))
+                {
+                    Debug.LogError($"{graphType.FullName} has a controller with an invalid type. The type {graphAttribute.controller.Name} does not implement IGraphViewController");
+                    return;
+                }
+
+                if (graphAttribute.controller != null && graphAttribute.controller.GetConstructor(Array.Empty<Type>()) == null)
+                {
+                    Debug.LogError($"{graphType.FullName} has a controller with an invalid type. The type {graphAttribute.controller.Name} does not have a public default constructor");
+                    return;
+                }
+
                 if (graphType.IsAbstract)
                 {
                     Debug.LogError($"{graphType.FullName} has a GraphAttribute but is abstract. Graph types with GraphAttribute will be instantiated and must be concrete classes. Remove the GraphAttribute or make the class concrete.");
