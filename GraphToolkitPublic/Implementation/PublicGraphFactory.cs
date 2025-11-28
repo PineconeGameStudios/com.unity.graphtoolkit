@@ -333,8 +333,10 @@ namespace Unity.GraphToolkit.Editor.Implementation
                     if (attribute == null)
                         continue;
 
-                    addedTypes.Add(nodeType);
                     if( ! attribute.IsGraphTypeSupported(graphType))
+                        continue;
+
+                    if(!addedTypes.Add(nodeType))
                         continue;
 
                     HandleNodeType(nodeType);
@@ -343,7 +345,8 @@ namespace Unity.GraphToolkit.Editor.Implementation
                     {
                         if( GetSpecificAttribute<UseWithGraphAttribute>(subNodeType, nodeType) != null) // if it has its own NodeAttribute, it will be handled in the loop above
                             continue;
-                        addedTypes.Add(subNodeType);
+                        if(!addedTypes.Add(subNodeType))
+                            continue;
                         HandleNodeType(subNodeType);
                     }
                 }
@@ -354,9 +357,9 @@ namespace Unity.GraphToolkit.Editor.Implementation
                 {
                     foreach (var type in graphType.Assembly.GetTypes())
                     {
-                        if (addedTypes.Contains(type))
-                            continue;
                         if (!typeof(Node).IsAssignableFrom(type))
+                            continue;
+                        if (!addedTypes.Add(type))
                             continue;
 
                         HandleNodeType(type);
