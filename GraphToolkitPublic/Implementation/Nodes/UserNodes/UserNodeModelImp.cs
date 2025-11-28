@@ -22,6 +22,8 @@ namespace Unity.GraphToolkit.Editor.Implementation
 
         public override string Title => m_Node?.Title ?? "Missing Node";
 
+        public override UnityEngine.UIElements.StyleSheet CustomStyleSheet => m_Node?.CustomStyleSheet;
+
         protected override void OnDefineNode(NodeDefinitionScope definitionScope)
         {
             ((IUserNodeModelImp)this).CustomOnDefineNode(definitionScope);
@@ -73,6 +75,8 @@ namespace Unity.GraphToolkit.Editor.Implementation
 
         public override string Title => m_Node?.Title ?? "Missing Node";
 
+        public override UnityEngine.UIElements.StyleSheet CustomStyleSheet => m_Node?.CustomStyleSheet;
+
         protected override void OnDefineNode(NodeDefinitionScope definitionScope)
         {
             ((IUserNodeModelImp)this).CustomOnDefineNode(definitionScope);
@@ -123,6 +127,8 @@ namespace Unity.GraphToolkit.Editor.Implementation
         Dictionary<string, INodeOption> IUserNodeModelImp.NodeOptionsByName => m_NodeOptionsByName;
 
         public override string Title => m_Node?.Title ?? "Missing Node";
+
+        public override UnityEngine.UIElements.StyleSheet CustomStyleSheet => m_Node?.CustomStyleSheet;
 
         protected override void OnDefineNode(NodeDefinitionScope definitionScope)
         {

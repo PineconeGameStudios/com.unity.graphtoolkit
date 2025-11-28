@@ -87,6 +87,8 @@ namespace Unity.GraphToolkit.Editor
             }
         }
 
+        public virtual UnityEngine.UIElements.StyleSheet CustomStyleSheet => null;
+
         /// <summary>
         /// The subtitle of the node.
         /// </summary>

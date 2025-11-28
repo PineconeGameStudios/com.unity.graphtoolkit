@@ -114,6 +114,8 @@ namespace Unity.GraphToolkit.Editor
             usageHints = UsageHints.DynamicTransform;
             AddToClassList(ussClassName);
             this.AddPackageStylesheet("Node.uss");
+            if(NodeModel?.CustomStyleSheet != null)
+                styleSheets.Add(NodeModel.CustomStyleSheet);
 
             // Add the NodeToolbarButtons
             BuildNodeToolbarButtons();
