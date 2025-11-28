@@ -144,16 +144,25 @@ namespace Unity.GraphToolkit.Editor.Implementation
                     return;
                 }
 
-                if (graphAttribute.controller != null && !typeof(IGraphViewController).IsAssignableFrom(graphAttribute.controller))
+                if (graphAttribute.controller != null)
                 {
-                    Debug.LogError($"{graphType.FullName} has a controller with an invalid type. The type {graphAttribute.controller.Name} does not implement IGraphViewController");
-                    return;
-                }
+                    if(!typeof(IGraphViewController).IsAssignableFrom(graphAttribute.controller))
+                    {
+                        Debug.LogError($"{graphType.FullName} has a controllerAsset with an invalid type. The type {graphAttribute.controller.FullName} does not implement IGraphViewController");
+                        return;
+                    }
 
-                if (graphAttribute.controller != null && graphAttribute.controller.GetConstructor(Array.Empty<Type>()) == null)
-                {
-                    Debug.LogError($"{graphType.FullName} has a controller with an invalid type. The type {graphAttribute.controller.Name} does not have a public default constructor");
-                    return;
+                    if(typeof(UnityEngine.Object).IsAssignableFrom(graphAttribute.controller))
+                    {
+                        Debug.LogError($"{graphType.FullName} has a controllerAsset with an invalid type. The type {graphAttribute.controller.FullName} must not inherit from UnityEngine.Object");
+                        return;
+                    }
+
+                    if(graphAttribute.controller.GetConstructor(Array.Empty<Type>()) == null)
+                    {
+                        Debug.LogError($"{graphType.FullName} has a controller with an invalid type. The type {graphAttribute.controller.FullName} does not have a public default constructor");
+                        return;
+                    }
                 }
 
                 if (graphType.IsAbstract)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Unity.GraphToolkit.Editor;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Unity.GraphToolkit.Editor.Implementation
@@ -27,8 +28,7 @@ namespace Unity.GraphToolkit.Editor.Implementation
                 if (graphAttribute != null && graphAttribute.controller != null)
                 {
                     controller = (IGraphViewController)Activator.CreateInstance(graphAttribute.controller);
-                    controller.SetRootView(this);
-                    controller?.OnEnable();
+                    controller.Initialize(this);
                 }
             }
         }

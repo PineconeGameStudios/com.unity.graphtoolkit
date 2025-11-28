@@ -45,7 +45,7 @@ namespace Unity.GraphToolkit.Editor
         public GraphOptions options { get; }
 
         /// <summary>
-        /// Controller type. Must implement <see cref="IGraphViewController"/> and have a no-argument constructor.
+        /// Controller type. Must be a non-<see cref="UnityEngine.Object"/> type that implements <see cref="IGraphViewController"/>.
         /// </summary>
         public Type controller { get; }
 
