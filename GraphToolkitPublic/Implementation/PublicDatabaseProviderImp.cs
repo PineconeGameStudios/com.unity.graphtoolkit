@@ -84,12 +84,13 @@ namespace Unity.GraphToolkit.Editor.Implementation
             foreach (var nodeType in ((GraphModelImp)GraphModel).SupportedNodes)
             {
                 bool isContextNode = typeof(ContextNode).IsAssignableFrom(nodeType);
+                var categoryAttribute = nodeType.GetCustomAttribute<NodeCategoryAttribute>(inherit: true);
                 var nodeDef = new GraphNodeModelLibraryItem(
                     nodeType.Name,
                     new NodeItemLibraryData(nodeType),
                     d => isContextNode? GraphModelImp.CreateContextNodeFromData(d, nodeType) : GraphModelImp.CreateNodeFromData(d, nodeType))
                 {
-                    CategoryPath = isContextNode ? "Contexts" : "Nodes"
+                    CategoryPath = categoryAttribute?.Category ?? (isContextNode ? "Contexts" : "Nodes")
                 };
 
                 db.Items.Add(nodeDef);
@@ -102,12 +103,13 @@ namespace Unity.GraphToolkit.Editor.Implementation
 
             foreach (var blockType in PublicGraphFactory.GetBlockTypes(graphType, contextType))
             {
+                var categoryAttribute = blockType.GetCustomAttribute<NodeCategoryAttribute>(inherit: true);
                 var nodeDef = new GraphNodeModelLibraryItem(
                     blockType.Name,
                     new NodeItemLibraryData(blockType),
                     d => GraphModelImp.CreateContextFromBlockData(d, blockType, contextType))
                 {
-                    CategoryPath = "Blocks"
+                    CategoryPath = categoryAttribute?.Category ?? "Blocks"
                 };
 
                 db.Items.Add(nodeDef);
