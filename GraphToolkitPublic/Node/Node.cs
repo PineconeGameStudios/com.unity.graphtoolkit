@@ -360,5 +360,7 @@ namespace Unity.GraphToolkit.Editor
 
         /// <inheritdoc />
         public INodeView GetView(IGraphView graphView) => ((INode)m_Implementation).GetView(graphView);
+
+        public virtual string Title => GetType().Name;
     }
 }

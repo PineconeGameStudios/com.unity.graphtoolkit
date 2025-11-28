@@ -20,7 +20,7 @@ namespace Unity.GraphToolkit.Editor.Implementation
         Dictionary<string,INodeOption> m_NodeOptionsByName = new ();
         Dictionary<string, INodeOption> IUserNodeModelImp.NodeOptionsByName => m_NodeOptionsByName;
 
-        public override string Title => m_Node?.GetType().Name ?? "Missing Node";
+        public override string Title => m_Node?.Title ?? "Missing Node";
 
         protected override void OnDefineNode(NodeDefinitionScope definitionScope)
         {
@@ -71,7 +71,7 @@ namespace Unity.GraphToolkit.Editor.Implementation
         Dictionary<string,INodeOption> m_NodeOptionsByName = new ();
         Dictionary<string, INodeOption> IUserNodeModelImp.NodeOptionsByName => m_NodeOptionsByName;
 
-        public override string Title => m_Node?.GetType().Name ?? "Missing Node";
+        public override string Title => m_Node?.Title ?? "Missing Node";
 
         protected override void OnDefineNode(NodeDefinitionScope definitionScope)
         {
@@ -122,7 +122,7 @@ namespace Unity.GraphToolkit.Editor.Implementation
         Dictionary<string,INodeOption> m_NodeOptionsByName = new ();
         Dictionary<string, INodeOption> IUserNodeModelImp.NodeOptionsByName => m_NodeOptionsByName;
 
-        public override string Title => m_Node?.GetType().Name ?? "Missing Node";
+        public override string Title => m_Node?.Title ?? "Missing Node";
 
         protected override void OnDefineNode(NodeDefinitionScope definitionScope)
         {
