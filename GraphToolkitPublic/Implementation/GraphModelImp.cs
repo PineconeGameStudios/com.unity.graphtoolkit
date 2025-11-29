@@ -4,6 +4,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Pool;
+using System.Linq;
 
 namespace Unity.GraphToolkit.Editor.Implementation
 {
@@ -312,6 +313,10 @@ namespace Unity.GraphToolkit.Editor.Implementation
             }
             var attribute = graphType.GetCustomAttribute<GraphAttribute>();
             if (attribute?.options.HasFlag(GraphOptions.DisableAutoInclusionOfNodesFromGraphAssembly) == false && node.GetType().Assembly == graphType.Assembly)
+            {
+                return true;
+            }
+            if (graphType.GetCustomAttributes<UseNodesAttribute>().Any(useAttribute => useAttribute.BaseType?.IsAssignableFrom(node.GetType()) == true))
             {
                 return true;
             }

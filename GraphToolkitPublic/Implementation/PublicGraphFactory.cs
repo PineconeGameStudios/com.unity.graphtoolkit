@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -34,6 +35,8 @@ namespace Unity.GraphToolkit.Editor.Implementation
                 HandleGraphAttribute(graphType);
 
                 HandleSubGraphAttribute(graphType);
+
+                HandleUseSubGraphAttribute(graphType);
             }
             int graphInfoCount = s_GraphInfos.Count;
 
@@ -218,6 +221,40 @@ namespace Unity.GraphToolkit.Editor.Implementation
                 mainGraphInfo.subgraphTypes ??= new List<Type>();
                 mainGraphInfo.subgraphTypes.Add(graphType);
             }
+
+            void HandleUseSubGraphAttribute(Type graphType)
+            {
+                foreach(var subGraphAttribute in graphType.GetCustomAttributes<UseSubgraphAttribute>(false))
+                {
+                    if(subGraphAttribute == null) continue;
+                    if(subGraphAttribute.SubgraphType == null)
+                    {
+                        Debug.LogError($"{graphType.FullName} has a UseSubgraphAttribute with a null subgraphType. Specify a valid subgraphType.");
+                        continue;
+                    }
+
+                    if(!typeof(Graph).IsAssignableFrom(subGraphAttribute.SubgraphType))
+                    {
+                        Debug.LogError($"{graphType.FullName} has a UseSubgraphAttribute with a subgraphType that isn't a subclass of Graph: {subGraphAttribute.SubgraphType.FullName}. Specify a valid subgraphType.");
+                        continue;
+                    }
+
+                    if(!s_GraphInfos.TryGetValue(graphType, out var mainGraphInfo))
+                    {
+                        mainGraphInfo = new GraphTypeInfos();
+                        s_GraphInfos.Add(graphType, mainGraphInfo);
+                    }
+
+                    if(!s_GraphInfos.TryGetValue(subGraphAttribute.SubgraphType, out var subgraphInfo))
+                    {
+                        subgraphInfo = new GraphTypeInfos();
+                        s_GraphInfos.Add(subGraphAttribute.SubgraphType, subgraphInfo);
+                    }
+
+                    mainGraphInfo.subgraphTypes ??= new List<Type>();
+                    mainGraphInfo.subgraphTypes.Add(subGraphAttribute.SubgraphType);
+                }
+            }
         }
 
         /// <summary>
@@ -327,14 +364,22 @@ namespace Unity.GraphToolkit.Editor.Implementation
                 var nodeTypes = TypeCache.GetTypesDerivedFrom<Node>();
 
                 var addedTypes = new HashSet<Type>();
+
+                var useAttributes = graphType.GetCustomAttributes<UseNodesAttribute>().ToArray();
+
                 foreach (var nodeType in nodeTypes)
                 {
-                    var attribute = nodeType.GetCustomAttribute<UseWithGraphAttribute>();
-                    if (attribute == null)
-                        continue;
+                    bool useDeclared = useAttributes.Any(useAttribute => useAttribute.BaseType?.IsAssignableFrom(nodeType) == true);
 
-                    if( ! attribute.IsGraphTypeSupported(graphType))
-                        continue;
+                    if (!useDeclared)
+                    {
+                        var attribute = nodeType.GetCustomAttribute<UseWithGraphAttribute>();
+                        if (attribute == null)
+                            continue;
+
+                        if (!attribute.IsGraphTypeSupported(graphType))
+                            continue;
+                    }
 
                     if(!addedTypes.Add(nodeType))
                         continue;
@@ -343,7 +388,7 @@ namespace Unity.GraphToolkit.Editor.Implementation
                     var subNodeTypes = TypeCache.GetTypesDerivedFrom(nodeType);
                     foreach (var subNodeType in subNodeTypes)
                     {
-                        if( GetSpecificAttribute<UseWithGraphAttribute>(subNodeType, nodeType) != null) // if it has its own NodeAttribute, it will be handled in the loop above
+                        if(!useDeclared && GetSpecificAttribute<UseWithGraphAttribute>(subNodeType, nodeType) != null) // if it has its own NodeAttribute, it will be handled in the loop above
                             continue;
                         if(!addedTypes.Add(subNodeType))
                             continue;
