@@ -115,7 +115,8 @@ namespace Unity.GraphToolkit.Editor
             var defaultValue = ObjectValue;
             if (defaultValue is EnumValueReference evr)
             {
-                defaultValue = evr.ValueAsEnum();
+                value = evr.ValueAsEnum();
+                return true;
             }
             var constantType = Type;
 
@@ -124,7 +125,7 @@ namespace Unity.GraphToolkit.Editor
                 value = default;
                 return true;
             }
-            if (defaultValue != null && defaultValue.GetType() == constantType)
+            if (defaultValue != null)
             {
                 value = defaultValue;
                 return true;
