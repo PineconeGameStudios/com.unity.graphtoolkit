@@ -16,7 +16,8 @@ namespace Unity.GraphToolkit.Editor
         /// <param name="connectorUI">The visual used for the port connector.</param>
         IPort AddInputPort(string portName, Type dataType = null,
                 string portId = null, PortOrientation orientation = PortOrientation.Horizontal,
-                Attribute[] attributes = null, object defaultValue = default);
+                Attribute[] attributes = null, object defaultValue = default, bool polymorphic = false,
+                bool allVariableTypes = false, Type[] explicitTypes = null);
 
         /// <summary>
         /// Adds a new output port on the node.

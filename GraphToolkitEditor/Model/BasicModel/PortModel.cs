@@ -72,6 +72,9 @@ namespace Unity.GraphToolkit.Editor
         bool m_IsExpandable;
         PortOrientation m_Orientation;
         IReadOnlyList<Attribute> m_Attributes;
+        bool m_Polymorphic;
+        bool m_AllVariableTypes;
+        List<TypeHandle> m_ExplicitTypes;
         IPolymorphicPortHandler m_PolymorphicPortHandler;
 
         List<PortModel> m_SubPorts = new List<PortModel>();
@@ -333,6 +336,13 @@ namespace Unity.GraphToolkit.Editor
                 m_PolymorphicPortHandler = value;
                 UpdateDatatypeHandler();
             }
+        }
+
+        public void ConfigurePolymorphic(bool polymorphic, bool allVariableTypes, Type[] explicitTypes)
+        {
+            m_Polymorphic = polymorphic;
+            m_AllVariableTypes = allVariableTypes;
+            m_ExplicitTypes = explicitTypes?.SelectToList(t => TypeHandleHelpers.GenerateTypeHandle(t));
         }
 
         /// <summary>

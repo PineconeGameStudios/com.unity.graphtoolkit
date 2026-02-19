@@ -27,6 +27,8 @@ namespace Unity.GraphToolkit.Editor
                 PortOrientation m_Orientation;
                 PortConnectorUI m_ConnectorUI;
                 PortCapacity m_PortCapacity;
+                PortPolymorphism m_Polymorphism;
+				Type[] m_ExplicitTypes;
                 List<Attribute> m_Attributes = new ();
 
                 internal Type portType;
@@ -90,6 +92,8 @@ namespace Unity.GraphToolkit.Editor
 
                 IInputPortBuilder<T> IInputPortBuilder.WithDataType<T>() => WithDataType<T>();
 
+                IInputPortBuilder IInputPortBuilder.WithPolymorphic(PortPolymorphism polymorphism, params Type[] explicitTypes) => WithPolymorphic(polymorphism, explicitTypes);
+
                 ITypedInputPortBuilder ITypedInputPortBuilder.WithDefaultValue(object defaultValue) => WithDefaultValue(defaultValue);
 
                 public PortBuilder WithDisplayName(string displayName)
@@ -109,6 +113,13 @@ namespace Unity.GraphToolkit.Editor
                 {
                     WithDataType(typeof(T));
                     return m_PortsDefinitionContext.GetFreeTypedBuilder<T>(this);
+                }
+
+                PortBuilder WithPolymorphic(PortPolymorphism polymorphism, Type[] explicitTypes)
+                {
+                    this.m_Polymorphism = polymorphism;
+                    this.m_ExplicitTypes = explicitTypes;
+                    return this;
                 }
 
                 PortBuilder WithDefaultValue(object defaultValue)
@@ -152,7 +163,7 @@ namespace Unity.GraphToolkit.Editor
 
                     var attributesArray = m_Attributes.Count > 0 ? m_Attributes.ToArray() : null;
                     if (m_Direction == PortDirection.Input)
-                        result = m_PortsDefinitionContext.portsDefinition.AddInputPort(m_DisplayName ?? m_PortName, portType, m_PortName, m_Orientation, attributesArray, defaultValue);
+                        result = m_PortsDefinitionContext.portsDefinition.AddInputPort(m_DisplayName ?? m_PortName, portType, m_PortName, m_Orientation, attributesArray, defaultValue, m_Polymorphism != PortPolymorphism.None, m_Polymorphism == PortPolymorphism.VariableTypes, m_ExplicitTypes);
                     else
                         result = m_PortsDefinitionContext.portsDefinition.AddOutputPort(m_DisplayName ?? m_PortName, portType, m_PortName, m_Orientation, attributesArray);
 

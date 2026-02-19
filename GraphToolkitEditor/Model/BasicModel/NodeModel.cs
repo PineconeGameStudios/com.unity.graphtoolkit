@@ -46,9 +46,9 @@ namespace Unity.GraphToolkit.Editor
             /// <returns>The newly created input port.</returns>
             public virtual PortModel AddInputPort(string portName, TypeHandle dataType, PortType portType = null,
                 string portId = null, PortOrientation orientation = PortOrientation.Horizontal,
-                PortModelOptions options = PortModelOptions.Default, Attribute[] attributes = null, Action<Constant> initializationCallback = null, Action<object> setterAction = null)
+                PortModelOptions options = PortModelOptions.Default, Attribute[] attributes = null, Action<Constant> initializationCallback = null, Action<object> setterAction = null, bool polymorphic = false, bool allVariableTypes = false, Type[] explicitTypes = null)
             {
-                return m_NodeModel.AddInputPort(portName, dataType, portType, portId, orientation, options, attributes, initializationCallback, setterAction);
+                return m_NodeModel.AddInputPort(portName, dataType, portType, portId, orientation, options, attributes, initializationCallback, setterAction, polymorphic, allVariableTypes, explicitTypes);
             }
 
             /// <summary>
@@ -214,12 +214,12 @@ namespace Unity.GraphToolkit.Editor
                 return m_NodeModel.AddMissingPort(direction, portId, orientation, portName);
             }
 
-            IPort IPortsDefinition.AddInputPort(string portName, Type dataType, string portId, PortOrientation orientation, Attribute[] attributes, object defaultValue)
+            IPort IPortsDefinition.AddInputPort(string portName, Type dataType, string portId, PortOrientation orientation, Attribute[] attributes, object defaultValue, bool polymorphic, bool allVariableTypes, Type[] explicitTypes)
             {
                 Action<Constant> initializationCallback = null;
                 if (defaultValue != null)
                     initializationCallback = c => c.ObjectValue = defaultValue;
-                return AddInputPort(portName, dataType?.GenerateTypeHandle() ?? TypeHandle.ExecutionFlow, null, portId, orientation, PortModelOptions.Default, attributes, initializationCallback);
+                return AddInputPort(portName, dataType?.GenerateTypeHandle() ?? (polymorphic ? TypeHandle.Automatic : TypeHandle.ExecutionFlow), null, portId, orientation, PortModelOptions.Default, attributes, initializationCallback, polymorphic: polymorphic, allVariableTypes: allVariableTypes, explicitTypes: explicitTypes);
             }
 
             IPort IPortsDefinition.AddOutputPort(string portName, Type dataType, string portId, PortOrientation orientation, Attribute[] attributes)
@@ -937,7 +937,7 @@ namespace Unity.GraphToolkit.Editor
         }
 
         PortModel ReuseOrCreatePortModel(PortDirection direction, PortOrientation orientation, string portName, PortType portType,
-            TypeHandle dataType, string portId, PortModelOptions options, Attribute[] attributes, IReadOnlyDictionary<string, PortModel> previousPorts, OrderedPorts newPorts, PortModel parentPort)
+            TypeHandle dataType, string portId, PortModelOptions options, Attribute[] attributes, bool polymorphic, bool allVariableTypes, Type[] explicitTypes, IReadOnlyDictionary<string, PortModel> previousPorts, OrderedPorts newPorts, PortModel parentPort)
         {
             // If a port is added outside OnDefineNode, clear the visible ports list to force a rebuild. ( Case of missing ports )
             if( ! m_InDefineNode)
@@ -951,15 +951,28 @@ namespace Unity.GraphToolkit.Editor
                 //Update the attributes and options in case the user changed them in OnDefineNode since last time.
                 portModelToAdd.SetAttributes(attributes);
                 portModelToAdd.Options = options;
+                portModelToAdd.ConfigurePolymorphic(polymorphic, allVariableTypes, explicitTypes);
             }
             else
             {
                 var model = CreatePort(direction, orientation, portName, portType, dataType, portId, options, attributes, parentPort);
                 portModelToAdd = model;
+                portModelToAdd.ConfigurePolymorphic(polymorphic, allVariableTypes, explicitTypes);
                 GraphModel?.CurrentGraphChangeDescription.AddChangedModel(this, ChangeHint.GraphTopology);
                 GraphModel?.CurrentGraphChangeDescription.AddNewModel(portModelToAdd);
             }
             GraphModel?.RegisterPort(portModelToAdd);
+
+			if(polymorphic)
+			{
+				var itemLibraryHelper = new ItemLibraryHelper(GraphModel);
+				var itemDatabaseProvider = itemLibraryHelper.GetItemDatabaseProvider();
+				var databases = itemDatabaseProvider.GetVariableDatabases();
+				databases[0].
+				var library = new ItemLibrary.Editor.ItemLibraryLibrary(databases, context: ItemLibraryService.Usage.Types);
+				library.
+				portModelToAdd.PolymorphicPortHandler = new PolymorphicPortHandler(0, );
+			}
 
             parentPort?.AddSubPort(portModelToAdd);
 
@@ -1007,13 +1020,15 @@ namespace Unity.GraphToolkit.Editor
         /// <remarks>CreatePort will be called only if <see cref="GetReusablePort"/> returns null.</remarks>
         internal PortModel AddInputPort(string portName, TypeHandle dataType, PortType portType = null,
             string portId = null, PortOrientation orientation = PortOrientation.Horizontal,
-            PortModelOptions options = PortModelOptions.Default, Attribute[] attributes = null, Action<Constant> initializationCallback = null, Action<object> setterAction = null)
+            PortModelOptions options = PortModelOptions.Default, Attribute[] attributes = null,
+            Action<Constant> initializationCallback = null, Action<object> setterAction = null,
+            bool polymorphic = false, bool allVariableTypes = false, Type[] explicitTypes = null)
         {
             if (!options.HasFlag(PortModelOptions.IsNodeOption) && (portId ?? portName)?.StartsWith(NodeOption.k_OptionIdPrefix) == true)
             {
                 throw new ArgumentException($"Input port {portName ?? portId} cannot have an id that starts with the reserved prefix {NodeOption.k_OptionIdPrefix} unless it is a node option.");
             }
-            var portModel = ReuseOrCreatePortModel(PortDirection.Input, orientation, portName, portType ?? PortType.Default, dataType, portId, options, attributes, m_InputPortInfos.previousPorts, m_InputPortInfos.portsById, null);
+            var portModel = ReuseOrCreatePortModel(PortDirection.Input, orientation, portName, portType ?? PortType.Default, dataType, portId, options, attributes, polymorphic, allVariableTypes, explicitTypes, m_InputPortInfos.previousPorts, m_InputPortInfos.portsById, null);
             UpdateConstantForInput(portModel, initializationCallback, setterAction);
             return portModel;
         }
@@ -1047,7 +1062,7 @@ namespace Unity.GraphToolkit.Editor
             string portId = null, PortOrientation orientation = PortOrientation.Horizontal,
             PortModelOptions options = PortModelOptions.Default, Attribute[] attributes = null)
         {
-            return ReuseOrCreatePortModel(PortDirection.Output, orientation, portName, portType ?? PortType.Default, dataType, portId, options, attributes, m_OutputPortInfos.previousPorts, m_OutputPortInfos.portsById, null);
+            return ReuseOrCreatePortModel(PortDirection.Output, orientation, portName, portType ?? PortType.Default, dataType, portId, options, attributes, false, false, null, m_OutputPortInfos.previousPorts, m_OutputPortInfos.portsById, null);
         }
 
         PortModel AddInputSubPort<TDataType>(PortModel parent, string portName, Func<TDataType> getter, Action<TDataType> setter, string portId = null, PortModelOptions options = PortModelOptions.Default, Attribute[] attributes = null)
@@ -1143,7 +1158,7 @@ namespace Unity.GraphToolkit.Editor
             }
 
             var portInfos = GetPortInfos(parent.Direction);
-            return ReuseOrCreatePortModel(parent.Direction, parent.Orientation, portName, parent.PortType, dataType, portId, options, attributes,portInfos.previousPorts, portInfos.portsById, parent);
+            return ReuseOrCreatePortModel(parent.Direction, parent.Orientation, portName, parent.PortType, dataType, portId, options, attributes, false, false, null,portInfos.previousPorts, portInfos.portsById, parent);
         }
 
         /// <inheritdoc />

@@ -129,6 +129,14 @@ namespace Unity.GraphToolkit.Editor
         ITypedInputPortBuilder WithDataType(Type portType);
 
         /// <summary>
+        /// Configures the polymorphism mode of the port
+        /// </summary>
+        /// <param name="polymorphism"></param>
+        /// <param name="explicitTypes">Explicit list of types to support</param>
+        /// <returns></returns>
+        IInputPortBuilder WithPolymorphic(PortPolymorphism polymorphism, params Type[] explicitTypes);
+
+        /// <summary>
         /// Configures the generic data type <typeparamref name="TData"/> of the input port.
         /// </summary>
         /// <typeparam name="TData">The data type of the input port.</typeparam>
