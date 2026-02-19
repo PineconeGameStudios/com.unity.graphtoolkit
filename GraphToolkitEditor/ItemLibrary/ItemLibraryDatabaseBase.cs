@@ -35,7 +35,7 @@ namespace Unity.GraphToolkit.ItemLibrary.Editor
         /// <summary>
         /// Whether or not to use parallel tasks to compute various operations such as indexing and filtering
         /// </summary>
-        protected const bool k_UseParallelTasks = true;
+        protected const bool k_UseParallelTasks = false;
 
         /// <summary>
         /// The Maximum number of filter results to cache.
