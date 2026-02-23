@@ -17,5 +17,7 @@ namespace Unity.GraphToolkit.Editor.Implementation
             }
             return Value.TryGetValue(out value);
         }
+
+        public bool TryGetValue(out object value) => Value.TryGetValue(out value);
     }
 }

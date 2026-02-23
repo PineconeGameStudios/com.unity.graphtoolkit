@@ -33,5 +33,10 @@ namespace Unity.GraphToolkit.Editor
         /// and <paramref name="value"/> is set to the default value of <typeparamref name="T"/>.
         /// </remarks>
         public bool TryGetValue<T>(out T value);
+
+        /// <summary>
+        /// Retrieve the stored value regardless of type
+        /// </summary>
+        public bool TryGetValue(out object value);
     }
 }
