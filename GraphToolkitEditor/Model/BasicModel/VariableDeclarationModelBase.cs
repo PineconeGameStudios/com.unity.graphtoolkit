@@ -260,6 +260,16 @@ namespace Unity.GraphToolkit.Editor
             return InitializationModel.TryGetValue(out value);
         }
 
+        bool IVariable.TryGetDefaultValue(out object value)
+        {
+            if (InitializationModel == null)
+            {
+                value = default;
+                return false;
+            }
+            return InitializationModel.TryGetValue(out value);
+        }
+
         string IVariable.name => Title;
 
         Type IVariable.dataType => DataType.Resolve();

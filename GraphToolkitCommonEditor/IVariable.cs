@@ -50,5 +50,7 @@ namespace Unity.GraphToolkit.Editor
         /// Use this method to retrieve the variable’s default value in a type-safe way.
         /// </remarks>
         bool TryGetDefaultValue<T>(out T value);
+
+        bool TryGetDefaultValue(out object value);
     }
 }
