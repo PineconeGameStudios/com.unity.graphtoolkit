@@ -121,6 +121,7 @@
 }
 
 .ge-port--data-type-float4,
+.ge-port--data-type-int4,
 .ge-port--data-type-vector4,
 .ge-port--data-type-quaternion,
 .ge-port--data-type-color {
@@ -143,7 +144,8 @@
     --port-color: var(--port-type-matrix);
 }
 
-.ge-port--data-type-game-object {
+.ge-port--data-type-game-object,
+.ge-port--data-type-entity {
     --port-color: var(--port-type-gameobject);
 }
 
@@ -155,6 +157,7 @@
 }
 
 .ge-port--data-type-float2,
+.ge-port--data-type-int2,
 .ge-port--data-type-vector2 {
     --port-color: var(--port-type-float2);
 }
@@ -164,6 +167,7 @@
 }
 
 .ge-port--data-type-float3,
+.ge-port--data-type-int3,
 .ge-port--data-type-vector3 {
     --port-color: var(--port-type-float3);
 }

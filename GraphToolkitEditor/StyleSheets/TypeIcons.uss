@@ -18,6 +18,11 @@
     --unity-image: resource("Packages/com.unity.graphtoolkit/GraphToolkitEditor/Icons/Port/Core_GameObject@4x.png");
 }
 
+.ge-icon--data-type-entity,
+.item-library-custom-item-entity__icon {
+    --unity-image: resource("Packages/com.unity.graphtoolkit/GraphToolkitEditor/Icons/Port/Entity@4x.png");
+}
+
 .ge-icon--data-type-float,
 .ge-icon--data-type-float1,
 .ge-icon--data-type-single,
@@ -73,8 +78,10 @@
 }
 
 .ge-icon--data-type-float4,
+.ge-icon--data-type-int4,
 .ge-icon--data-type-vector4,
 .item-library-custom-item-float4__icon,
+.item-library-custom-item-int4__icon,
 .item-library-custom-item-vector4__icon {
     --unity-image: resource("Packages/com.unity.graphtoolkit/GraphToolkitEditor/Icons/Port/Vector4@4x.png");
 }
@@ -87,6 +94,21 @@
 .ge-icon--data-type-gradient,
 .item-library-custom-item-gradient__icon {
     --unity-image: resource("Packages/com.unity.graphtoolkit/GraphToolkitEditor/Icons/Port/Gradient@4x.png");
+}
+
+.ge-icon--data-type-int2,
+.item-library-custom-item-int2__icon {
+    --unity-image: resource("Packages/com.unity.graphtoolkit/GraphToolkitEditor/Icons/Port/IntVector2@4x.png");
+}
+
+.ge-icon--data-type-int3,
+.item-library-custom-item-int3__icon {
+    --unity-image: resource("Packages/com.unity.graphtoolkit/GraphToolkitEditor/Icons/Port/IntVector3@4x.png");
+}
+
+.ge-icon--data-type-int4,
+.item-library-custom-item-int4__icon {
+    --unity-image: resource("Packages/com.unity.graphtoolkit/GraphToolkitEditor/Icons/Port/IntVector4@4x.png");
 }
 
 .ge-icon--data-type-animation-curve,
@@ -196,9 +218,11 @@
 }
 
 .ge-icon--data-type-float4,
+.ge-icon--data-type-int4,
 .ge-icon--data-type-vector4,
 .ge-icon--data-type-quaternion,
 .item-library-custom-item-float4__icon,
+.item-library-custom-item-int4__icon,
 .item-library-custom-item-vector4__icon,
 .item-library-custom-item-quaternion__icon {
     --unity-image-tint-color: var(--port-type-float4);
@@ -230,7 +254,9 @@
 }
 
 .ge-icon--data-type-game-object,
-.item-library-custom-item-game-object__icon {
+.ge-icon--data-type-entity,
+.item-library-custom-item-game-object__icon,
+.item-library-custom-item-entity__icon {
     --unity-image-tint-color: var(--port-type-gameobject);
 }
 
@@ -251,15 +277,19 @@
 }
 
 .ge-icon--data-type-float2,
+.ge-icon--data-type-int2,
 .ge-icon--data-type-vector2,
 .item-library-custom-item-float2__icon,
+.item-library-custom-item-int2__icon,
 .item-library-custom-item-vector2__icon {
     --unity-image-tint-color: var(--port-type-float2);
 }
 
 .ge-icon--data-type-float3,
+.ge-icon--data-type-int3,
 .ge-icon--data-type-vector3,
 .item-library-custom-item-float3__icon,
+.item-library-custom-item-int3__icon,
 .item-library-custom-item-vector3__icon {
     --unity-image-tint-color: var(--port-type-float3);
 }
