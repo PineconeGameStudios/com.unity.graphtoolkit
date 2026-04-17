@@ -26,6 +26,12 @@ namespace Unity.GraphToolkit.Editor
         Graph GetSubgraph();
 
         /// <summary>
+        /// Retrieves the asset path corresponding to the subgraph linked to this node, if it's not a local subgraph.
+        /// </summary>
+        /// <returns>True if a graph asset was referenced. False if the graph is a local subgraph.</returns>
+        bool TryGetSubgraphAssetGuid(out UnityEditor.GUID assetGuid);
+
+        /// <summary>
         /// Retrieves the subgraph variable linked to the input port at the given index.
         /// </summary>
         /// <param name="port"></param>

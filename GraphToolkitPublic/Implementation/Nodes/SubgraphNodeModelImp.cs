@@ -13,6 +13,12 @@ namespace Unity.GraphToolkit.Editor.Implementation
             return (graphModel as GraphModelImp)?.Graph;
         }
 
+        public bool TryGetSubgraphAssetGuid(out UnityEditor.GUID assetGuid)
+        {
+            assetGuid = SubgraphReference.AssetGuid;
+            return assetGuid != default;
+        }
+
         public IVariable GetVariableForInputPort(int index)
         {
             INode self = this;
