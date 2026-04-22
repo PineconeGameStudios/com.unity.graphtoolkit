@@ -232,9 +232,32 @@ namespace Unity.GraphToolkit.Editor
             public GraphObjectDefinitionAttribute.LoadGraphObjectLoader loaderFunction;
         }
 
-        static Dictionary<string, GraphObjectInfos> s_GraphObjectInfosByExtension = new ();
-        static Dictionary<Type, Type> s_WindowTypeForGraphObjectType = new ();
+        static Dictionary<string, GraphObjectInfos> s_GraphObjectInfosByExtension = new();
+        static Dictionary<Type, Type> s_WindowTypeForGraphObjectType = new();
         static Dictionary<GUID, GraphObject> s_LoadedGraphObjects;
+        static Dictionary<GUID, GraphObject> s_LoadedGraphObjectsPersistent;
+        static int s_EphemeralLoad;
+
+        public static void StartEphemeralLoad()
+        {
+            if (++s_EphemeralLoad == 1)
+            {
+                s_LoadedGraphObjectsPersistent = s_LoadedGraphObjects;
+                s_LoadedGraphObjects = new();
+            }
+        }
+
+        public static void EndEphemeralLoad()
+        {
+            if (--s_EphemeralLoad == 0)
+            {
+                foreach (var obj in s_LoadedGraphObjects.Values)
+                    obj.DestroyObjects();
+
+                s_LoadedGraphObjects = s_LoadedGraphObjectsPersistent;
+                s_LoadedGraphObjectsPersistent = null;
+            }
+        }
 
         static string InstanceIdToFileExtension(InstanceID instanceId)
         {
@@ -280,7 +303,7 @@ namespace Unity.GraphToolkit.Editor
             if (guid == default)
                 return null;
 
-            var graphObject = forgetLoadedAsset ? null : GetLoadedAsset(guid);
+            var graphObject = (forgetLoadedAsset && s_EphemeralLoad == 0) ? null : GetLoadedAsset(guid);
             if (graphObject != null)
                 return graphObject;
 
@@ -293,17 +316,14 @@ namespace Unity.GraphToolkit.Editor
                 return null;
             }
 
-            if (!forgetLoadedAsset)
-            {
-                s_LoadedGraphObjects[guid] = graphObject;
-            }
+            s_LoadedGraphObjects[guid] = graphObject;
 
             if( graphObject != null)
             {
                 graphObject.AfterLoadForeignAsset(guid);
             }
 
-            if (forgetLoadedAsset)
+            if (forgetLoadedAsset || s_EphemeralLoad > 0)
             {
                 // This is a temporary object that should not be kept in domain reloads.
                 graphObject.hideFlags &= ~HideFlags.DontUnloadUnusedAsset;

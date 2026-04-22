@@ -145,9 +145,12 @@ namespace Unity.GraphToolkit.Editor
         {
             CheckFilePathAndGraphType<T>(assetPath);
             var graphObject = GraphObject.LoadGraphObjectCopyAtPathAndForget(assetPath, typeof(GraphObjectImp)) as GraphObjectImp;
-
             return (graphObject?.GraphModel as GraphModelImp)?.Graph as T;
         }
+
+        public static void StartEphemeralLoad() => GraphObjectFactory.StartEphemeralLoad();
+
+        public static void EndEphemeralLoad() => GraphObjectFactory.EndEphemeralLoad();
 
         /// <summary>
         /// Retrieves the globally unique identifier (GUID) for the asset associated with the specified <see cref="Graph"/>.
