@@ -3571,7 +3571,7 @@ namespace Unity.GraphToolkit.Editor
         /// </summary>
         public virtual void OnEnable()
         {
-            MigrateAssetSubgraphsAndGraphReferences();
+            // MigrateAssetSubgraphsAndGraphReferences();
 
             // Called when asset is saved. Make sure m_DirtyScopes reflects the reality.
             if ((GraphObject == null || !GraphObject.Dirty) && m_DirtyScopes != null)
