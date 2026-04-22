@@ -261,7 +261,7 @@ namespace Unity.GraphToolkit.Editor
         /// </summary>
         /// <seealso cref="OnBeforeSavingGraphObject"/>
         /// <seealso cref="OnGraphObjectSaved"/>
-        public virtual void Save()
+        public virtual void Save(bool deferReimport = false)
         {
             if( !OnBeforeSavingGraphObject() )
                 return;
@@ -285,10 +285,18 @@ namespace Unity.GraphToolkit.Editor
                     }
                     UpdateFileSystemInfos();
                     Dirty = false;
-                    AssetDatabase.ImportAsset(filePath);
+
+                    if (!deferReimport)
+                        AssetDatabase.ImportAsset(filePath);
                 }
                 OnGraphObjectSaved();
             }
+        }
+
+        public void Reimport()
+        {
+            if (AssetFileGuid != default)
+                AssetDatabase.ImportAsset(FilePath);
         }
 
         /// <summary>
@@ -298,7 +306,19 @@ namespace Unity.GraphToolkit.Editor
         /// <remarks>The AssetFileGuid is not updated by this method and might not yet be valid. Default implementation is symmetric with <see cref="DefaultLoadGraphObjectFromFileOnDisk{T}"/>.</remarks>
         protected virtual void SaveGraphObjectToFileOnDisk(string path)
         {
-            InternalEditorUtility.SaveToSerializedFileAndForget(new Object [] {this}, path, true);
+            if (File.Exists(path))
+            {
+                var tempPath = FileUtil.GetUniqueTempPathInProject();
+                InternalEditorUtility.SaveToSerializedFileAndForget(new Object[] { this }, tempPath, true);
+                var b0 = File.ReadAllBytes(path);
+                var b1 = File.ReadAllBytes(tempPath);
+                if (!b0.AsSpan().SequenceEqual(b1.AsSpan()))
+                    FileUtil.ReplaceFile(tempPath, path);
+            }
+            else
+            {
+                InternalEditorUtility.SaveToSerializedFileAndForget(new Object[] { this }, path, true);
+            }
         }
 
         /// <summary>

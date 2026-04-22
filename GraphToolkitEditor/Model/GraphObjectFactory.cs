@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Unity.GraphToolsAuthoringFramework.InternalEditorBridge;
@@ -423,13 +424,20 @@ namespace Unity.GraphToolkit.Editor
         public static void SaveAllGraphs()
         {
             UpdateLoadedGraphObjects();
-            foreach (var graphObject in s_LoadedGraphObjects.Values)
+
+            List<GraphObject> reloads = new();
+
+            foreach (var graphObject in s_LoadedGraphObjects.Values.ToArray())
             {
-                if (graphObject != null)
+                if (graphObject != null && graphObject.Dirty)
                 {
-                    graphObject.Save();
+                    graphObject.Save(deferReimport: true);
+                    reloads.Add(graphObject);
                 }
             }
+
+            foreach (var graphObject in reloads)
+                graphObject.Reimport();
         }
 
         public static IReadOnlyList<string> GetExtensionsForAssetType(Type assetType)
