@@ -25,9 +25,17 @@ namespace Unity.GraphToolkit.Editor.Implementation
         static Dictionary<string, Type> s_ExtensionToGraphTypes = new ();
         static Dictionary<Type, string> s_GraphTypeToExtensions = new ();
         static Dictionary<Type, GraphTypeInfos> s_GraphInfos = new ();
+        static bool s_Initialized;
+        static PublicGraphFactory() => Initialize();
 
-        static PublicGraphFactory()
+        [InitializeOnLoadMethod]
+        static void Initialize()
         {
+            if(s_Initialized)
+                return;
+
+            s_Initialized = true;
+
             var graphTypes = TypeCache.GetTypesDerivedFrom<Graph>();
 
             foreach (var graphType in graphTypes)
